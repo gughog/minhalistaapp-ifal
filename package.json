@@ -1,0 +1,14 @@
+{
+  "name": "minha-lista",
+  "version": "1.0.0",
+  "description": "Um app para adicionar coisas a serem feitas.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Gustavo Oliveira",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^5.0.5"
+  }
+}

@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
-        <title>Adicione itens a lista de afazeres: </title>
+        <!--MaterializeCSS-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--end_MaterializeCSS-->
+        <title> Adicione itens a lista de afazeres: </title>
     </head>
     <body>
         
@@ -12,6 +17,20 @@
             </div>
             <button type="submit">Adicionar</button>
         </form>
+
+        <script>
+            const electron = require('electron')
+            const { ipcRenderer } = electron
+
+            let submitForm = function(e){
+                e.preventDefault()
+                const item = document.querySelector('#item').value
+                ipcRenderer.send('item:add', item)
+            }
+
+            const form = document.querySelector('form')
+            form.addEventListener('submit', submitForm)
+        </script>
 
     </body>
 </html>

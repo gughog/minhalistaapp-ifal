@@ -2,7 +2,12 @@ const electron = require('electron')
 const url = require('url')
 const path = require('path')
 
-const { app, BrowserWindow, Menu } = electron
+const { 
+    app, 
+    BrowserWindow, 
+    Menu,
+    ipcMain
+} = electron
 
 let mainWindow
 let addItemWindow
@@ -10,7 +15,7 @@ let addItemWindow
 // on app is ready the window is created:
 app.on('ready', ()=>{
     //window creation
-    mainWindow = new BrowserWindow()
+    mainWindow = new BrowserWindow({webPreferences: {nodeIntegration: true}})
     //loading html into window:
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'mainWindow.html'),
@@ -33,7 +38,8 @@ let createAddItemWindow = () =>{
     addItemWindow = new BrowserWindow({
         width: 300,
         height: 200,
-        title: 'Adicione um novo item à lista:'
+        title: 'Adicione um novo item à lista:',
+        webPreferences: {nodeIntegration: true}
     })
 
     //loading html into window:
@@ -48,6 +54,13 @@ let createAddItemWindow = () =>{
     })
 }
 
+// Catching item data from html page:
+ipcMain.on('item:add', (e, item)=>{
+    //console.log(item)
+    mainWindow.webContents.send('item:add', item)
+    addItemWindow.close()
+})
+
 
 // Menu template:
 const mainMenuTemplate = [
@@ -56,12 +69,16 @@ const mainMenuTemplate = [
         submenu: [
             {
                 label: 'Adicionar um item',
+                accelerator: process.platform == 'darwin' ? 'Command+Shift+A' : 'Ctrl+Shift+A',
                 click(){
                     createAddItemWindow()
                 }
             },
             {
-                label: 'Limpar todos os itens'
+                label: 'Limpar todos os itens',
+                click(){
+                    mainWindow.webContents.send('item:clear')
+                }
             },
             {
                 label: 'Sair',

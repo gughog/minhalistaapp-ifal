@@ -1,11 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
-        <title>:: Minha Lista ::</title>
+        <!--MaterializeCSS-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--end_MaterializeCSS-->
+        <title> :: Minha Lista :: </title>
     </head>
-    <body>
+    <body id="body" class="">
         
-        <h1>Minha Lista de afazeres</h1>
+        <nav>
+            <div class="nav-wrapper light-blue darken-4">
+                <a class="brand-logo center">
+                    MinhaLista <i class="large material-icons">library_books</i>
+                </a>
+                <a class="brand-logo right" id="toggleColor">
+                    <i class="large material-icons">lightbulb_outline</i>
+                </a>
+            </div>
+        </nav>
+
+        <ul>
+            <!-- items goes here -->
+        </ul>
+
+        <script>
+            const electron = require('electron')
+            const fs = require('fs')
+            const { ipcRenderer } = electron
+            const ul = document.querySelector('ul')
+
+            // Add item --------------------------------------
+            ipcRenderer.on('item:add', (e, item)=>{
+                const li = document.createElement('li')
+                const itemText = document.createTextNode(item)
+                li.appendChild(itemText)
+                ul.appendChild(li)
+            })
+
+            // Clear all -------------------------------------
+            ipcRenderer.on('item:clear', ()=>{
+                ul.innerHTML = ''
+            })
+
+            // Clear one on DoubleClick ----------------------
+            let clearOnDoubleClick = (e) =>{
+                e.target.remove()
+            }
+
+            ul.addEventListener('dblclick', clearOnDoubleClick)
+
+            // Dark mode -------------------------------------
+            const docBody = document.querySelector('#body')
+            const toggleButton = document.querySelector('#toggleColor')
+            let setToDark = () =>{
+                docBody.className = 'grey darken-3 white-text'
+            }
+            toggleButton.style.cursor = 'pointer'
+            toggleButton.addEventListener('click', setToDark)
+
+        
+        </script>
 
     </body>
 </html>

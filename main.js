@@ -1,7 +1,6 @@
 const electron = require('electron')
 const url = require('url')
 const path = require('path')
-
 const { 
     app, 
     BrowserWindow, 
@@ -64,7 +63,6 @@ ipcMain.on('item:add', (e, item)=>{
     addItemWindow.close()
 })
 
-
 // Menu template:
 const mainMenuTemplate = [
     {
@@ -117,5 +115,3 @@ if(process.env.NODE_ENV !== 'production'){
         ]
     })
 }
-
-// Stops on 33:00

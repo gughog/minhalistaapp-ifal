@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
-        <!--MaterializeCSS-->
+    <!--MaterializeCSS-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!--end_MaterializeCSS-->
+    <!-- SweetAlert -->
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <title> :: Minha Lista :: </title>
     </head>
     <body id="body" class="">
@@ -15,11 +16,11 @@
                 <a class="brand-logo center">
                     MinhaLista <i class="large material-icons">library_books</i>
                 </a>
-            <!--           
-                <a class="brand-logo right" id="toggleColor">
-                    <i class="large material-icons">lightbulb_outline</i>
+                      
+                <a href="#" class="brand-logo right modal-trigger" id="modal">
+                    <i class="large material-icons">info_outline</i>
                 </a>
-            -->
+
             </div>
         </nav>
 
@@ -33,11 +34,10 @@
             const { ipcRenderer } = electron
             const ul = document.querySelector('ul')
             let itemsAdded = []
-            let db = require('./database.json')
 
             // Add item --------------------------------------
             ipcRenderer.on('item:add', (e, item)=>{
-                
+
                 //Add to an array
                 itemsAdded.push(item)
 
@@ -47,12 +47,13 @@
                     data.push(itemsAdded)
 
                     // filtering duplicated items:
-                    let filteredData = data.flat().filter((element, pos)=>{
+                    var filteredData = data.flat().filter((element, pos)=>{
                         return data.flat().indexOf(element) == pos
                     })
 
                     // Writing in file
                     fs.writeFile("./database.json", JSON.stringify(filteredData), (err)=>{
+
                         if(err){
                             //error handle
                             M.toast({
@@ -67,38 +68,50 @@
                             classes: "green darken-1 white-text"
                         })
 
+                        console.log(filteredData)
                     })
-
-                    //Rendering from array--------------------------------------------------
-                    console.log(filteredData)
 
                     // Cleans the DOM if have Items to avoid duplicated items
                     if(ul.children.length !== 0){
                             ul.innerHTML = ''
+                            
                     }
 
+                    //Rendering from array--------------------------------------------------
                     filteredData.forEach((item)=>{
-                        const li = document.createElement('li')
-                        const itemText = document.createTextNode(item)
 
-                        //inserting to the dom
-                        li.className = 'collection-item'
-                        li.appendChild(itemText)
-                        ul.className = 'collection'
-                        ul.appendChild(li)
+                            const li = document.createElement('li')
+                            const itemText = document.createTextNode(item)
+
+                            //inserting to the dom
+                            li.className = 'collection-item'
+                            li.appendChild(itemText)
+                            ul.className = 'collection'
+                            ul.appendChild(li)
                     })
-                })
 
+                    //Cleaning to avoid re-rendering
+                    itemsAdded = []
+                })
                              
             })
 
             // Clear all -------------------------------------
             ipcRenderer.on('item:clear', ()=>{
+                // handle of clearing ul body, filteredData info and json content
                 ul.innerHTML = ''
-            
+                
+                //Overwrite json file with an empty array
                 fs.writeFile('./database.json', '[""]', (err)=>{
                     console.log('Deleted')
                 })
+
+                M.toast({
+                    html: 'Todos os itens foram deletados!',
+                    classes: "light-blue darken-4 white-text"
+                })
+
+                console.log(filteredData)
             })
 
             // Clear one on DoubleClick ----------------------
@@ -112,21 +125,29 @@
             // Event for doubleclick to erase htmlnode
             ul.addEventListener('dblclick', clearOnDoubleClick)
 
-            // Dark mode -------------------------------------
-            //const docBody = document.querySelector('#body')
-            //const toggleButton = document.querySelector('#toggleColor')
-            /*
-            let setToDark = () =>{
-                const li = document.querySelector('li')
-                docBody.className = 'grey darken-3 white-text'
-                li.className = 'collection-item grey darken-3 white-text'
-                
-            }
-            */
-            //toggleButton.style.cursor = 'pointer'
-            //toggleButton.addEventListener('click', setToDark)
+            // Modal init -----------------------------------------
+            let textModal = 
+`
+App desenvolvido pela equipe:
+- Gustavo Giovanne,
+- Rafael,
+- Airton
+
+Atividade avaliativa referente a matéria "Algoritmos e lógica de Programação", do Instituto Federal de Alagoas (IFAL).
+
+Desenvolvido com Electron + Node.js + Materialize.css
+
+Maceió, 2019
+`
+            document.getElementById('modal').addEventListener('click', ()=>{
+                swal({
+                    title: "Sobre o projeto",
+                    text: textModal,
+                    icon: 'info',
+                    button: 'Fechar'
+                })
+            })
 
         </script>
-
     </body>
 </html>

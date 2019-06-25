@@ -10,13 +10,21 @@
     </head>
     <body>
         
-        <form>
-            <div>
-                <label>Item: </label>
-                <input type="text" id="item" autofocus />
-            </div>
-            <button type="submit">Adicionar</button>
-        </form>
+        <div class="container">
+            <form>
+                <div>
+
+                    <h5>Adicione um item: </h5>
+                    <input type="text" id="item" autofocus />
+                </div>
+                <button 
+                    class="btn waves-effect waves-light" 
+                    type="submit">
+                    <i class="material-icons right">add_circle</i>
+                    Adicionar
+                </button>
+            </form>
+        </div>
 
         <script>
             const electron = require('electron')

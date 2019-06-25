@@ -15,9 +15,11 @@
                 <a class="brand-logo center">
                     MinhaLista <i class="large material-icons">library_books</i>
                 </a>
+            <!--           
                 <a class="brand-logo right" id="toggleColor">
                     <i class="large material-icons">lightbulb_outline</i>
                 </a>
+            -->
             </div>
         </nav>
 
@@ -30,13 +32,19 @@
             const fs = require('fs')
             const { ipcRenderer } = electron
             const ul = document.querySelector('ul')
+            let itemsAdded = []
 
             // Add item --------------------------------------
             ipcRenderer.on('item:add', (e, item)=>{
                 const li = document.createElement('li')
                 const itemText = document.createTextNode(item)
+                li.className = 'collection-item'
                 li.appendChild(itemText)
+                ul.className = 'collection'
                 ul.appendChild(li)
+    
+                itemsAdded.push(item)
+                console.log(JSON.stringify(itemsAdded))
             })
 
             // Clear all -------------------------------------
@@ -47,20 +55,27 @@
             // Clear one on DoubleClick ----------------------
             let clearOnDoubleClick = (e) =>{
                 e.target.remove()
+                if(ul.children.length == 0){
+                    ul.className = ''
+                }
             }
 
             ul.addEventListener('dblclick', clearOnDoubleClick)
 
             // Dark mode -------------------------------------
-            const docBody = document.querySelector('#body')
-            const toggleButton = document.querySelector('#toggleColor')
+            //const docBody = document.querySelector('#body')
+            //const toggleButton = document.querySelector('#toggleColor')
+            /*
             let setToDark = () =>{
+                const li = document.querySelector('li')
                 docBody.className = 'grey darken-3 white-text'
+                li.className = 'collection-item grey darken-3 white-text'
+                
             }
-            toggleButton.style.cursor = 'pointer'
-            toggleButton.addEventListener('click', setToDark)
+            */
+            //toggleButton.style.cursor = 'pointer'
+            //toggleButton.addEventListener('click', setToDark)
 
-        
         </script>
 
     </body>

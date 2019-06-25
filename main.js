@@ -12,6 +12,9 @@ const {
 let mainWindow
 let addItemWindow
 
+// Current environment:
+//process.env.NODE_ENV = 'production'
+
 // on app is ready the window is created:
 app.on('ready', ()=>{
     //window creation

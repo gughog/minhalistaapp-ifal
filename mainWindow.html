@@ -23,7 +23,7 @@
             </div>
         </nav>
 
-        <ul>
+        <ul id="mainList">
             <!-- items goes here -->
         </ul>
 
@@ -37,19 +37,9 @@
 
             // Add item --------------------------------------
             ipcRenderer.on('item:add', (e, item)=>{
-                const li = document.createElement('li')
-                const itemText = document.createTextNode(item)
-
-                // inserting to the dom
-                li.className = 'collection-item'
-                li.appendChild(itemText)
-                ul.className = 'collection'
-                ul.appendChild(li)
-    
+                
                 //Add to an array
                 itemsAdded.push(item)
-
-                console.log()
 
                 // writing out to json
                 fs.readFile("./database.json", (err, prevData)=>{
@@ -57,7 +47,7 @@
                     data.push(itemsAdded)
 
                     // filtering duplicated items:
-                    filteredData = data.flat().filter((element, pos)=>{
+                    let filteredData = data.flat().filter((element, pos)=>{
                         return data.flat().indexOf(element) == pos
                     })
 
@@ -71,21 +61,44 @@
                             })
                         }
 
-                        //alert('Saved to database!')
+                        console.log('Saved to database!')
                         M.toast({
                             html: 'Item salvo!',
                             classes: "green darken-1 white-text"
                         })
+
+                    })
+
+                    //Rendering from array--------------------------------------------------
+                    console.log(filteredData)
+
+                    // Cleans the DOM if have Items to avoid duplicated items
+                    if(ul.children.length !== 0){
+                            ul.innerHTML = ''
+                    }
+
+                    filteredData.forEach((item)=>{
+                        const li = document.createElement('li')
+                        const itemText = document.createTextNode(item)
+
+                        //inserting to the dom
+                        li.className = 'collection-item'
+                        li.appendChild(itemText)
+                        ul.className = 'collection'
+                        ul.appendChild(li)
                     })
                 })
 
-                //Rendering from array
-                
+                             
             })
 
             // Clear all -------------------------------------
             ipcRenderer.on('item:clear', ()=>{
                 ul.innerHTML = ''
+            
+                fs.writeFile('./database.json', '[""]', (err)=>{
+                    console.log('Deleted')
+                })
             })
 
             // Clear one on DoubleClick ----------------------
@@ -96,6 +109,7 @@
                 }
             }
 
+            // Event for doubleclick to erase htmlnode
             ul.addEventListener('dblclick', clearOnDoubleClick)
 
             // Dark mode -------------------------------------

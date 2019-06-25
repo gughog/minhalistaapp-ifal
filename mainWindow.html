@@ -52,7 +52,6 @@
                 console.log()
 
                 // writing out to json
-
                 fs.readFile("./database.json", (err, prevData)=>{
                     let data = JSON.parse(prevData)
                     data.push(itemsAdded)

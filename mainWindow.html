@@ -38,13 +38,23 @@
             ipcRenderer.on('item:add', (e, item)=>{
                 const li = document.createElement('li')
                 const itemText = document.createTextNode(item)
+
+                // inserting to the dom
                 li.className = 'collection-item'
                 li.appendChild(itemText)
                 ul.className = 'collection'
                 ul.appendChild(li)
     
+                //Add to an array
                 itemsAdded.push(item)
-                console.log(JSON.stringify(itemsAdded))
+
+                // writing out to json
+                fs.writeFile("./database.json", JSON.stringify(itemsAdded), (err)=>{
+                    if(err){
+                        console.log(err)
+                    }
+                    console.log('Saved to database!')
+                })
             })
 
             // Clear all -------------------------------------

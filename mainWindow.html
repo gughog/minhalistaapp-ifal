@@ -33,6 +33,7 @@
             const { ipcRenderer } = electron
             const ul = document.querySelector('ul')
             let itemsAdded = []
+            let db = require('./database.json')
 
             // Add item --------------------------------------
             ipcRenderer.on('item:add', (e, item)=>{
@@ -48,13 +49,39 @@
                 //Add to an array
                 itemsAdded.push(item)
 
+                console.log()
+
                 // writing out to json
-                fs.writeFile("./database.json", JSON.stringify(itemsAdded), (err)=>{
-                    if(err){
-                        console.log(err)
-                    }
-                    console.log('Saved to database!')
+
+                fs.readFile("./database.json", (err, prevData)=>{
+                    let data = JSON.parse(prevData)
+                    data.push(itemsAdded)
+
+                    // filtering duplicated items:
+                    filteredData = data.flat().filter((element, pos)=>{
+                        return data.flat().indexOf(element) == pos
+                    })
+
+                    // Writing in file
+                    fs.writeFile("./database.json", JSON.stringify(filteredData), (err)=>{
+                        if(err){
+                            //error handle
+                            M.toast({
+                                html: `Erro ${err} ocorreu!`,
+                                classes: "red darken-4 white-text"
+                            })
+                        }
+
+                        //alert('Saved to database!')
+                        M.toast({
+                            html: 'Item salvo!',
+                            classes: "green darken-1 white-text"
+                        })
+                    })
                 })
+
+                //Rendering from array
+                
             })
 
             // Clear all -------------------------------------
